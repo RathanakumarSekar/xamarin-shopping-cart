@@ -43,5 +43,7 @@
 	<string>ShoppingCart</string>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/AppIcon.appiconset</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Provide better products based on your location.</string>
 </dict>
 </plist>

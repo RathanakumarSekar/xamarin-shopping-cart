@@ -8,6 +8,10 @@ using ShoppingCart.Views.Onboarding;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using TypeLocator = ShoppingCart.MockDataService.TypeLocator;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using System;
 
 namespace ShoppingCart
 {
@@ -15,11 +19,15 @@ namespace ShoppingCart
     {
         public static string BaseUri = "Your Web API";
 
+        string locationData = string.Empty;
+
+
         public static bool MockDataService = true;
 
         public App()
         {
             InitializeComponent();
+
 
             if (MockDataService)
             {
@@ -87,9 +95,47 @@ namespace ShoppingCart
             }
         }
 
+        private async System.Threading.Tasks.Task GetLocationDetailsAsync()
+        {
+            try
+            {
+                var location = await Geolocation.GetLastKnownLocationAsync();
+
+                if (location != null)
+                {
+                    locationData = $"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}";
+                }
+            }
+            catch (FeatureNotSupportedException e)
+            {
+                // Handle not supported on device exception
+            }
+            catch (FeatureNotEnabledException e)
+            {
+                // Handle not enabled on device exception
+            }
+            catch (PermissionException e)
+            {
+                // Handle permission exception
+            }
+            catch (Exception e)
+            {
+                // Unable to get location
+            }
+        }
+
         protected override void OnStart()
         {
             // Handle when your app starts
+            AppCenter.Start("android={Your Android App secret here};" +
+                  "uwp={Your UWP App secret here};" +
+                  "ios={Your iOS App secret here};",
+                  typeof(Analytics), typeof(Crashes));
+            Analytics.SetEnabledAsync(true);
+            GetLocationDetailsAsync();
+
+            Analytics.TrackEvent("Application Started ",
+                       new Dictionary<string, string> { { "Location", locationData }, { "OS Version", Xamarin.Essentials.DeviceInfo.VersionString }, { "Device Model", Xamarin.Essentials.DeviceInfo.Manufacturer + Xamarin.Essentials.DeviceInfo.Model } });
         }
 
         protected override void OnSleep()
