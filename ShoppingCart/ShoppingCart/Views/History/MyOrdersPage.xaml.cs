@@ -5,6 +5,7 @@ using ShoppingCart.ViewModels.History;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using TypeLocator = ShoppingCart.MockDataService.TypeLocator;
+using Microsoft.AppCenter.Crashes;
 
 namespace ShoppingCart.Views.History
 {
@@ -28,10 +29,12 @@ namespace ShoppingCart.Views.History
             if (orderedItem != null && orderedItem.Count > 0)
                 (BindingContext as MyOrdersPageViewModel).MyOrders = new ObservableCollection<UserCart>(orderedItem);
         }
-    }
+
         protected override void OnAppearing()
         {
             base.OnAppearing();
             Crashes.GenerateTestCrash();
         }
+    }
+       
 }
