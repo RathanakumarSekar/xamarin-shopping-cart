@@ -29,4 +29,9 @@ namespace ShoppingCart.Views.History
                 (BindingContext as MyOrdersPageViewModel).MyOrders = new ObservableCollection<UserCart>(orderedItem);
         }
     }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            Crashes.GenerateTestCrash();
+        }
 }
